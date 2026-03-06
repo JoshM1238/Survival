@@ -475,7 +475,7 @@ void ASurvivalCharacter::BeginPlay()
 
 	if (StarterWeapon)
 	{
-		ASurvivalWeaponActor* SpawnedWeapon = GetWorld()->SpawnActor<ASurvivalWeaponActor>(
+		ASurvivalWeaponActor* SpawnedWeapon = GetWorld()->SpawnActorDeferred<ASurvivalWeaponActor>(
 			StarterWeapon,
 			GetMesh1P()->GetSocketTransform(FName("Weapon"))
 		);
@@ -486,7 +486,6 @@ void ASurvivalCharacter::BeginPlay()
 			QueueEquip(SpawnedWeapon);
 			AmmoByWeaponType.Find(SpawnedWeapon->WeaponType)->CurrentAmmo += SpawnedWeapon->MagazineSize * 3;
 			CurrentItems[0] = SpawnedWeapon;
-			//SpawnedWeapon->BulletsLeftInMagazine = SpawnedWeapon->MagazineSize;
 		}
 	}
 
