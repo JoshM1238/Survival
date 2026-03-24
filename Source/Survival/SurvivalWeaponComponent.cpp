@@ -11,8 +11,7 @@
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
-#include "SurvivalPickUpComponent.h"
-
+#include "Components/SphereComponent.h"
 // Sets default values for this component's properties
 ASurvivalWeaponActor::ASurvivalWeaponActor() 
 	: APickupBase()
@@ -21,18 +20,6 @@ ASurvivalWeaponActor::ASurvivalWeaponActor()
 	bIsReloading = false;
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	SetRootComponent(Mesh);
-
-
-	// PickupSphere became PickupComponent so that pickup overlap is handled by SurvivalPickUpComponent
-	PickupComponent = CreateDefaultSubobject<USurvivalPickUpComponent>(TEXT("PickupComponent"));
-	PickupComponent->InitSphereRadius(50.f);
-	PickupComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	PickupComponent->SetCollisionObjectType(ECC_WorldDynamic);
-	PickupComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	PickupComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	PickupComponent->SetupAttachment(Mesh);
-
-
 }
 
 
@@ -155,7 +142,7 @@ void ASurvivalWeaponActor::EnableSimulation()
 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	Mesh->SetSimulatePhysics(true);
 
-	PickupComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
 
 }
 
@@ -178,7 +165,6 @@ void ASurvivalWeaponActor::DisableSimulation()
 {
 	Mesh->SetSimulatePhysics(false);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	PickupComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
@@ -355,19 +341,5 @@ void ASurvivalWeaponActor::BeginPlay()
 	SetPickupItemName(WeaponName);
 
 	BulletsLeftInMagazine = MagazineSize;
-
-	if (PickupComponent) {
-		PickupComponent->OnPickUp.AddDynamic(this, &ASurvivalWeaponActor::OnPickupOverlap);
-	}
 }
-
-void ASurvivalWeaponActor::OnPickupOverlap(ASurvivalCharacter* PickupCharacter) {
-
-	if (PickupCharacter) {
-		OnPlayerInteract(PickupCharacter);
-	}
-
-}
-
-
 
